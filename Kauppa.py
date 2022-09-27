@@ -23,12 +23,12 @@ class Kauppa:
             if s == 3:
                 
 
-                    TuoteNimi = input('Lisää tuote: Nimi ')
+                    TuoteNimi = input('Lisää tuote: Nimisssssssss ')
                     TuoteHinta = input('Lisää tuote: Hinta ')
                     lt = database_connection.add_products(TuoteNimi, TuoteHinta)
 
 
             else:
-                print('Ei toimi')
+                print('Ei toimii')
 
     
