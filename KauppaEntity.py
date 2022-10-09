@@ -4,35 +4,40 @@ from KauppaDAO import *
 
 class Tables:
 
-        conn = database_connection.connect_toDB()
+        conn = DatabaseConnection.connect_toDB()
            
         try:    
 
             queries = ('''
-                    DROP TABLE IF EXISTS Asiakas;
-                    DROP TABLE IF EXISTS Tuote;
-                    DROP TABLE IF EXISTS Ostoskori;
-                    DROP TABLE IF EXISTS Lasku;
+                    DROP TABLE IF EXISTS Customer;
+                    DROP TABLE IF EXISTS Product;
+                    DROP TABLE IF EXISTS Basket;
+                    DROP TABLE IF EXISTS Admin;
 
-                    CREATE TABLE Asiakas (
-                        As_ID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                        As_Nimi    TEXT,
-                        As_numero TEXT
+                    PRAGMA foreign_keys;
+                    PRAGMA foreign_keys = ON;
+
+                    CREATE TABLE Admin (
+                        AdminID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                        AdminName   TEXT,
+                        AdminPassword TEXT
                     );
-                    CREATE TABLE Tuote (
-                        Tuote_ID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                        Tuote_nimi    TEXT,
-                        Tuote_hinta   TEXT
+
+                    CREATE TABLE Customer (
+                        CustomerID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                        CustomerName   TEXT,
+                        CustomerNumber TEXT
                     );
-                    CREATE TABLE Ostoskori (
-                        Ostoskori_ID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                        Asiakas_ID    INTEGER NOT NULL,
-                        Ostoskori_sisältö TEXT
+                    CREATE TABLE Product (
+                        ProductID  INTEGER PRIMARY KEY,
+                        ProductName   TEXT,
+                        ProductPrice TEXT
                     );
-                    CREATE TABLE Lasku (
-                        Lasku_ID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                        Ostoskori_ID  INTEGER NOT NULL,
-                        Lasku_sisältö TEXT
+                    CREATE TABLE Basket (
+                        BasketID INTEGER PRIMARY KEY,
+                        BasketProductID INTEGER,
+                        BasketProduct TEXT,
+                        BasketPrice TEXT
                     );
                     ''')
     
@@ -47,17 +52,21 @@ class Tables:
                                
             #DATA TO DATABASE
             d = conn.cursor()
-            d.executescript('''INSERT INTO Tuote (Tuote_nimi, Tuote_hinta)
+            d.executescript('''INSERT INTO Product (ProductName, ProductPrice)
                             VALUES  ('Juusto', '2e'),
                                     ('Maito', '2e'),
                                     ('Leipä', '2e'),
                                     ('Megaforce', '1e'),
                                     ('Euroshopper energy drink', '5e'),
                                     ('Mutakakku', '7e'),
-                                    ('Kakku', '12e')
+                                    ('Mansikkakakku', '12e')
                                     ''') 
 
-            d.executescript('''INSERT INTO Asiakas (As_nimi, As_numero)
+            d.executescript('''INSERT INTO Admin (AdminName, AdminPassword)
+                            VALUES  ('Admin', 1234)
+                                    ''') 
+
+            d.executescript('''INSERT INTO Customer (CustomerName, CustomerNumber)
                             VALUES  ('John', 040392123), 
                                     ('Pekka', 023232323),
                                     ('Jussi', 0231233332),
@@ -70,8 +79,10 @@ class Tables:
             try:
                 d
                 print('Datan lisäys onnistui')      
+
             except Error as e:
                 print(e)    
+                
         except Error as e:
                 print(e)
 

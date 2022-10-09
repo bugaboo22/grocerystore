@@ -2,7 +2,9 @@ import sqlite3
 from sqlite3 import Error
 
 
-class database_connection:
+class DatabaseConnection:
+
+    
 
     #create a database connection to a SQLite database 
     def connect_toDB():   
@@ -14,54 +16,62 @@ class database_connection:
         
         return conn
 
-    def tables(self, Asiakas, Tuote, Ostoskori, Lasku): 
-        self.Asiakas = Asiakas
-        self.Tuote = Tuote
-        self.Ostoskori = Ostoskori
-        self.Lasku = Lasku   
-    
-    def create_customer(As_nimi, As_num):
-        conn = database_connection.connect_toDB()
+    def create_customer(customerName, customerNumber):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()  
-        d.execute('INSERT INTO Asiakas(As_nimi, As_numero) VALUES(?,?)', [As_nimi, As_num])
+        d.execute('INSERT INTO Customer(CustomerName, CustomerNumber) VALUES(?,?)', [customerName, customerNumber])
         conn.commit()
 
-    def delete_customer(self, As_nimi):
-        conn = database_connection.connect_toDB()
+    def delete_customer(customerNumber):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor() 
-        d.execute('DELETE FROM Asiakas WHERE As_nimi=(?)', [As_nimi])
+        d.execute('DELETE FROM Customer WHERE CustomerNumber=(?)', [customerNumber])
         conn.commit()
 
-    def update_customer(uc, un):
-        conn = database_connection.connect_toDB()
+    def update_customer(customerOldName, customerNewName):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
-        d.execute('UPDATE Asiakas SET As_nimi=(?) WHERE As_nimi=(?)', [un, uc])
+        d.execute('UPDATE Customer SET CustomerName=(?) WHERE CustomerName=(?)', [customerNewName, customerOldName])
         conn.commit()
 
-    def add_products(m, s):
-        conn = database_connection.connect_toDB()
+    def admin_check(username, password):
+        #username = "Admin"
+        #password = "1234"
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
-        d.execute('INSERT INTO Tuote(Tuote_nimi, Tuote_hinta) VALUES(?,?)', [m, s])
+        d.execute('SELECT AdminName from Admin WHERE AdminName=(?) AND AdminPassword=(?)', [username, password])
+        if not d.fetchone(): 
+            print("Login failed")
+            return False
+        else:
+            print("Welcome Admin")
+            return True
+        
+
+    def add_products(productName, productPrice):
+        conn = DatabaseConnection.connect_toDB()
+        d = conn.cursor()
+        d.execute('INSERT INTO Product(ProductName, ProductPrice) VALUES(?,?)', [productName, productPrice])
         conn.commit()
 
-    def delete_product(dp):
-        conn = database_connection.connect_toDB()
+    def delete_product(removeProduct):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
-        d.execute('DELETE FROM Tuote WHERE Tuote_nimi=(?)', [dp])
+        d.execute('DELETE FROM Product WHERE ProductName=(?)', [removeProduct])
         conn.commit()
     
-    def update_product(Vanha_nimi, Uusi_nimi):
-        conn = database_connection.connect_toDB()
+    def update_product(oldProductName, newProductName):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
-        d.execute('UPDATE Tuote SET Tuote_nimi=(?) WHERE Tuote_nimi=(?)', [Uusi_nimi, Vanha_nimi])
+        d.execute('UPDATE Product SET ProductName=(?) WHERE ProductName=(?)', [newProductName, oldProductName])
         conn.commit()
 
     def select_all_products():
 
         try:
-            conn = database_connection.connect_toDB()
+            conn = DatabaseConnection.connect_toDB()
             d = conn.cursor()
-            sqlite_select_query = ("SELECT * FROM Tuote")
+            sqlite_select_query = ("SELECT * FROM Product")
             d.execute(sqlite_select_query)
             rows = d.fetchall()
 
@@ -72,20 +82,18 @@ class database_connection:
         except sqlite3.Error as error:
             print("Failed to read data from sqlite table", error)
 
-    def add_to_basket(Tuote_nimi):
-        Tuotteet = database_connection.select_all_products()
-        conn = database_connection.connect_toDB()
+    def add_to_basket(productName):
+        conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
-        query = 'INSERT INTO Ostoskori (Ostoskori_sisältö) SELECT * FROM Tuote (Tuote_nimi) WHERE Tuote_nimi=(?)', [Tuote_nimi]
-        d.executemany(query)
-        conn.commit
+        d.execute('INSERT INTO Basket (BasketProductID, BasketProduct, BasketPrice) SELECT * FROM Product WHERE ProductName=(?)', [productName])
+        conn.commit()
 
     def all_basket_items():
       
         try:
-            conn = database_connection.connect_toDB()
+            conn = DatabaseConnection.connect_toDB()
             d = conn.cursor()
-            sqlite_select_query = ("SELECT * FROM Ostoskori")
+            sqlite_select_query = ("SELECT * FROM Basket")
             d.execute(sqlite_select_query)
             rows = d.fetchall()
 
@@ -95,6 +103,15 @@ class database_connection:
 
         except sqlite3.Error as error:
             print("Failed to read data from sqlite table", error)
+
+    def print_bill():
+        conn = DatabaseConnection.connect_toDB()
+        d = conn.cursor()
+        d.execute("SELECT * FROM Basket")
+        with open('Lasku.txt', 'w') as f:
+            for line in d:
+                f.write(f"{line}\n")
+        print('Lasku luotu')
 
     if __name__ == '__main__':
         connect_toDB()
