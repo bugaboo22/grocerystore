@@ -4,7 +4,15 @@ from KauppaDAO import *
 
 class Tables:
 
+        #This programn is only intended to be run when you want to refresh the database and check if the connection works
+
         conn = DatabaseConnection.connect_toDB()
+
+        def main():
+            print("Program works")
+
+        if __name__ == "__main__":
+            main()
            
         try:    
 
@@ -13,9 +21,6 @@ class Tables:
                     DROP TABLE IF EXISTS Product;
                     DROP TABLE IF EXISTS Basket;
                     DROP TABLE IF EXISTS Admin;
-
-                    PRAGMA foreign_keys;
-                    PRAGMA foreign_keys = ON;
 
                     CREATE TABLE Admin (
                         AdminID  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -71,18 +76,11 @@ class Tables:
                                     ('Pekka', 023232323),
                                     ('Jussi', 0231233332),
                                     ('Pirkko', 0231441132),
-                                    ('Jerome', 0214412132),
+                                    ('Marja', 0214412132),
                                     ('Otto', 0232323425),
-                                    ('Pavel', 0231551342)
+                                    ('Johanna', 0231551342)
                                     ''') 
-
-            try:
-                d
-                print('Datan lisäys onnistui')      
-
-            except Error as e:
-                print(e)    
-                
+   
         except Error as e:
                 print(e)
 

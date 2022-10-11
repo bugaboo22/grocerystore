@@ -4,9 +4,7 @@ from sqlite3 import Error
 
 class DatabaseConnection:
 
-    
-
-    #create a database connection to a SQLite database 
+    #Create a database connection to a SQLite database 
     def connect_toDB():   
         conn = sqlite3.connect('kauppa.db')   
         try:
@@ -34,6 +32,7 @@ class DatabaseConnection:
         d.execute('UPDATE Customer SET CustomerName=(?) WHERE CustomerName=(?)', [customerNewName, customerOldName])
         conn.commit()
 
+    #Check admin authorization with username and password
     def admin_check(username, password):
         #username = "Admin"
         #password = "1234"
@@ -47,19 +46,20 @@ class DatabaseConnection:
             print("Welcome Admin")
             return True
         
-
     def add_products(productName, productPrice):
         conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
         d.execute('INSERT INTO Product(ProductName, ProductPrice) VALUES(?,?)', [productName, productPrice])
         conn.commit()
 
+    #Delete product
     def delete_product(removeProduct):
         conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
         d.execute('DELETE FROM Product WHERE ProductName=(?)', [removeProduct])
         conn.commit()
-    
+
+    #Update product name and price
     def update_product(oldProductName, newProductName):
         conn = DatabaseConnection.connect_toDB()
         d = conn.cursor()
@@ -67,7 +67,6 @@ class DatabaseConnection:
         conn.commit()
 
     def select_all_products():
-
         try:
             conn = DatabaseConnection.connect_toDB()
             d = conn.cursor()
@@ -78,7 +77,6 @@ class DatabaseConnection:
             for row in rows:
                 print(row)       
             d.close()
-
         except sqlite3.Error as error:
             print("Failed to read data from sqlite table", error)
 
