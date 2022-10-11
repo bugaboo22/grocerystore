@@ -6,7 +6,7 @@ class DatabaseConnection:
 
     #Create a database connection to a SQLite database 
     def connect_toDB():   
-        conn = sqlite3.connect('kauppa.db')   
+        conn = sqlite3.connect('shop.db')   
         try:
             conn
         except Error as e:

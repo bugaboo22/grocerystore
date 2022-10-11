@@ -1,6 +1,6 @@
 import sqlite3
 from sqlite3 import Error
-from KauppaDAO import *
+from StoreDAO import *
 
 class Tables:
 
